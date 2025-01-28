@@ -1,6 +1,8 @@
 import { Link, Outlet } from 'react-router';
+import usePageShowInformation from '~/usePageShowInformation';
 
 export default function Layout() {
+  const { persisted } = usePageShowInformation();
   return (
     <div>
       <div className="flex gap-4 bg-blue-700 text-white p-2">
@@ -15,6 +17,7 @@ export default function Layout() {
           viewTransitionName: 'main-content',
         }}
       >
+        {persisted ? 'persisted' : 'not persisted'}
         <Outlet/>
       </div>
     </div>
