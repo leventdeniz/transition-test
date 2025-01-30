@@ -1,7 +1,7 @@
 import { useLocation, useViewTransitionState } from 'react-router';
 
-export default function Page3() {
-  const transition = useViewTransitionState('/page3');
+export default function Tds() {
+  const transition = useViewTransitionState('/tds');
 
   return (
     <div
@@ -9,8 +9,8 @@ export default function Page3() {
         ...(transition && { viewTransitionName: 'page' }),
       }}
     >
-      <h1 className="text-lg font-bold">Page 3</h1>
-      <p>This is page 3</p>
+      <h1 className="text-lg font-bold">TDS</h1>
+      <p>This is TDS</p>
       {transition && <pre>{JSON.stringify(transition, null, 2)}</pre>}
     </div>
   );

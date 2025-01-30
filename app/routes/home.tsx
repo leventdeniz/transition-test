@@ -1,5 +1,5 @@
 import type { Route } from "./+types/home";
-import { Welcome } from '~/welcome/welcome';
+import { redirect } from 'react-router';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -7,7 +7,10 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
+export function loader() {
+  return redirect("/input");
+}
 
 export default function Home() {
-  return <Welcome />;
+  return <div>Home</div>;
 }

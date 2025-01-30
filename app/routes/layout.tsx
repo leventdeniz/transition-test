@@ -5,11 +5,8 @@ export default function Layout() {
   const { persisted } = usePageShowInformation();
   return (
     <div>
-      <div className="flex gap-4 bg-blue-700 text-white p-2">
-        <Link to="/">home</Link>
-        <Link to="page1">page1</Link>
-        <Link to="page2">page2</Link>
-        <Link to="page3">page3</Link>
+      <div className="flex justify-between gap-4 bg-blue-900 text-white p-2">
+        <span>CHECK24 Wireframe</span><span>{persisted ? 'persisted' : 'not persisted'}</span>
       </div>
       <div
         className="container m-auto"
@@ -17,7 +14,6 @@ export default function Layout() {
           viewTransitionName: 'main-content',
         }}
       >
-        {persisted ? 'persisted' : 'not persisted'}
         <Outlet/>
       </div>
     </div>
