@@ -1,18 +1,30 @@
 import { data, useLoaderData, useNavigate } from 'react-router';
-import React, { Suspense } from 'react';
+import React, { Suspense, use } from 'react';
 import { Skeleton } from '~/components/ui/skeleton';
 import type { ResultEntry } from '~/types/result.type';
 import { Button } from '~/components/ui/button';
 import type { Route } from '../../.react-router/types/app/routes/+types/result';
-
+import cache from 'memory-cache';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const queryParams = url.searchParams;
 
   const monthlyCareAllowance = queryParams.get('monthlyCareAllowance') ?? 150000;
+  const cachedUrl: ResultEntry[] = cache.get(request.url);
+  if (cachedUrl) {
+    const test =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
+    await Promise.race([
+     new Promise((resolve) => setTimeout(resolve, 40)),
+     test,
+   ]);
 
-  const slowResultRequest = await fetch(
+    return data({
+      result: test,
+    });
+  }
+
+  const slowResultRequest: Promise<ResultEntry[]> = fetch(
     `https://pflegeversicherung.check24-test.de/api/v1/public/customer-frontend/calculation/tariffversions?birthdate=02.12.1997&monthlyCareAllowance=${monthlyCareAllowance}`,
     {
       method: 'GET',
@@ -22,16 +34,22 @@ export async function loader({ request }: Route.LoaderArgs) {
     },
   ).then((res) => res.json());
 
+  await Promise.race([
+   new Promise((resolve) => setTimeout(resolve, 40)),
+   slowResultRequest,
+ ]);
+
+  cache.put(request.url, slowResultRequest, 1000 * 60 * 60);
   return data(
     { result: slowResultRequest },
-    {
+/*    {
       headers: {
         'Cache-Control': 'max-age=3600, public',
       },
-    },
+    }*/
   );
 }
-
+/*
 export function headers({ loaderHeaders }: Route.HeadersArgs) {
   return loaderHeaders;
 }
@@ -44,9 +62,9 @@ export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
   }
 }
 
-clientLoader.hydrate = true as const;
+clientLoader.hydrate = true as const;*/
 
-export function HydrateFallback({}: Route.HydrateFallbackProps) {
+/*export function HydrateFallback({}: Route.HydrateFallbackProps) {
   const navigate = useNavigate();
   return (
       <div>
@@ -59,10 +77,10 @@ export function HydrateFallback({}: Route.HydrateFallbackProps) {
         <p>This is Result Page</p>
       </div>
     )
-}
+}*/
 
 export default function Result({}: Route.ComponentProps) {
-  const loaderData = useLoaderData();
+  const loaderData = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   return (
     <div>
@@ -71,7 +89,7 @@ export default function Result({}: Route.ComponentProps) {
         <span>input change</span>
       </Button>
       <Suspense fallback={<ResultsSkeletons length={12}/>}>
-        <ResultList results={loaderData.result}/>
+        <ResultList resultsPromise={loaderData.result}/>
       </Suspense>
       <i>Bei diesem Beispiel flackern im iOs Device die ViewTransitions</i>
       <p>This is Result Page</p>
@@ -79,17 +97,20 @@ export default function Result({}: Route.ComponentProps) {
   );
 }
 
-const ResultList = ({ results }: { results: ResultEntry[] }) => (
-  <div className="flex flex-col gap-4 m-4">
-    {results.length > 0 && results.map((data: any) => (
-      <div key={data.id}>
-        <p>{data.id}</p>
-        <p>{data.provider.name}</p>
-        <p>{data.tariff.name}</p>
-      </div>
-    ))}
-  </div>
-);
+const ResultList = ({ resultsPromise }: { resultsPromise: Promise<ResultEntry[]> }) => {
+  const results = use(resultsPromise)
+  return (
+    <div className="flex flex-col gap-4 m-4">
+      {results.length > 0 && results.map((data: any) => (
+        <div key={data.id}>
+          <p>{data.id}</p>
+          <p>{data.provider.name}</p>
+          <p>{data.tariff.name}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const ResultsSkeletons = ({ length }: { length: number }) => {
   return (

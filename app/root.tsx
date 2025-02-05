@@ -4,7 +4,7 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration, useLocation,
+  ScrollRestoration,
 } from 'react-router';
 
 import type { Route } from './+types/root';
