@@ -5,8 +5,8 @@ export default function Layout() {
   const { persisted } = usePageShowInformation();
   return (
     <div>
-      <div className="flex justify-between gap-4 bg-blue-900 text-white p-2">
-        <span>CHECK24 Wireframe</span><span>{persisted ? 'persisted' : 'not persisted'}</span>
+      <div className="flex justify-between items-center gap-4 bg-blue-900 text-white p-2">
+        <span>CHECK24 Wireframe</span><span className="text-xs">bfcache: {persisted ? 'persisted' : 'not persisted'}</span>
       </div>
       <div
         className="container m-auto"

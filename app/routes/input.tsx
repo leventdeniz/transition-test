@@ -58,7 +58,9 @@ export default function Input({ loaderData }: Route.ComponentProps) {
         </RadioGroup>
       </Form>
       <Button asChild>
-        <Link to={{pathname: "/result", search: location.search }}>weiter zu result</Link>
+        <Link to={{pathname: "/result", search: location.search }} viewTransition>
+          weiter zu result
+        </Link>
       </Button>
     </div>
   )

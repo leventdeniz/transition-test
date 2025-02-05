@@ -11,18 +11,18 @@ export async function loader({ request }: Route.LoaderArgs) {
   const queryParams = url.searchParams;
 
   const monthlyCareAllowance = queryParams.get('monthlyCareAllowance') ?? 150000;
-  const cachedUrl: ResultEntry[] = cache.get(request.url);
+/*  const cachedUrl: ResultEntry[] = cache.get(request.url);
   if (cachedUrl) {
-    const test =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
+    const test: Promise<ResultEntry[]> =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
     await Promise.race([
-     new Promise((resolve) => setTimeout(resolve, 40)),
+     new Promise((resolve) => setTimeout(resolve, 30)),
      test,
    ]);
 
     return data({
       result: test,
     });
-  }
+  }*/
 
   const slowResultRequest: Promise<ResultEntry[]> = fetch(
     `https://pflegeversicherung.check24-test.de/api/v1/public/customer-frontend/calculation/tariffversions?birthdate=02.12.1997&monthlyCareAllowance=${monthlyCareAllowance}`,
@@ -33,38 +33,37 @@ export async function loader({ request }: Route.LoaderArgs) {
       },
     },
   ).then((res) => res.json());
-
+/*
   await Promise.race([
-   new Promise((resolve) => setTimeout(resolve, 40)),
+   new Promise((resolve) => setTimeout(resolve, 30)),
    slowResultRequest,
- ]);
+ ]);*/
 
   cache.put(request.url, slowResultRequest, 1000 * 60 * 60);
   return data(
     { result: slowResultRequest },
-/*    {
+    {
       headers: {
         'Cache-Control': 'max-age=3600, public',
       },
-    }*/
+    }
   );
 }
-/*
+
 export function headers({ loaderHeaders }: Route.HeadersArgs) {
   return loaderHeaders;
 }
-
-export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
+/*export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
   const serverLoaderData = await serverLoader();
 
   return {
     result: serverLoaderData.result,
   }
-}
+}*/
 
-clientLoader.hydrate = true as const;*/
-
-/*export function HydrateFallback({}: Route.HydrateFallbackProps) {
+// clientLoader.hydrate = true as const;
+/*
+export function HydrateFallback({}: Route.HydrateFallbackProps) {
   const navigate = useNavigate();
   return (
       <div>
@@ -80,7 +79,7 @@ clientLoader.hydrate = true as const;*/
 }*/
 
 export default function Result({}: Route.ComponentProps) {
-  const loaderData = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData();
   const navigate = useNavigate();
   return (
     <div>
