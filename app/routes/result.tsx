@@ -1,4 +1,4 @@
-import { data, useLoaderData, useNavigate } from 'react-router';
+import { data, Link, useLoaderData, useLocation, useNavigate } from 'react-router';
 import React, { Suspense, use } from 'react';
 import { Skeleton } from '~/components/ui/skeleton';
 import type { ResultEntry } from '~/types/result.type';
@@ -42,11 +42,11 @@ export async function loader({ request }: Route.LoaderArgs) {
   cache.put(request.url, slowResultRequest, 1000 * 60 * 60);
   return data(
     { result: slowResultRequest },
-    {
+    /*{
       headers: {
         'Cache-Control': 'max-age=3600, public',
       },
-    }
+    }*/
   );
 }
 
@@ -81,11 +81,12 @@ export function HydrateFallback({}: Route.HydrateFallbackProps) {
 export default function Result({}: Route.ComponentProps) {
   const loaderData = useLoaderData();
   const navigate = useNavigate();
+  const location = useLocation();
   return (
     <div>
       <h1 className="text-lg font-bold">Result</h1>
-      <Button asChild onClick={() => navigate(-1)}>
-        <span>input change</span>
+      <Button asChild>
+        <Link to={{pathname: "/input", search: location.search }} ><span>input change</span></Link>
       </Button>
       <Suspense fallback={<ResultsSkeletons length={12}/>}>
         <ResultList resultsPromise={loaderData.result}/>
