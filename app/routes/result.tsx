@@ -11,7 +11,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const queryParams = url.searchParams;
 
   const monthlyCareAllowance = queryParams.get('monthlyCareAllowance') ?? 150000;
-/*  const cachedUrl: ResultEntry[] = cache.get(request.url);
+  const cachedUrl: ResultEntry[] = cache.get(request.url);
   if (cachedUrl) {
     const test: Promise<ResultEntry[]> =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
     await Promise.race([
@@ -22,7 +22,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     return data({
       result: test,
     });
-  }*/
+  }
 
   const slowResultRequest: Promise<ResultEntry[]> = fetch(
     `https://pflegeversicherung.check24-test.de/api/v1/public/customer-frontend/calculation/tariffversions?birthdate=02.12.1997&monthlyCareAllowance=${monthlyCareAllowance}`,
@@ -80,19 +80,24 @@ export function HydrateFallback({}: Route.HydrateFallbackProps) {
 
 export default function Result({}: Route.ComponentProps) {
   const loaderData = useLoaderData();
-  const navigate = useNavigate();
   const location = useLocation();
   return (
     <div>
       <h1 className="text-lg font-bold">Result</h1>
       <Button asChild>
-        <Link to={{pathname: "/input", search: location.search }} ><span>input change</span></Link>
+        <Link to={{pathname: "/input", search: location.search }}>
+          <span>input change</span>
+        </Link>
       </Button>
       <Suspense fallback={<ResultsSkeletons length={12}/>}>
         <ResultList resultsPromise={loaderData.result}/>
       </Suspense>
       <i>Bei diesem Beispiel flackern im iOs Device die ViewTransitions</i>
-      <p>This is Result Page</p>
+      <Button asChild>
+        <Link to={{pathname: "/input", search: location.search }}>
+          <span>input change</span>
+        </Link>
+      </Button>
     </div>
   );
 }
