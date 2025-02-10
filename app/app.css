@@ -16,3 +16,151 @@ body {
     --radius: 0.5rem;
   }
 }
+
+@layer view-transitions {
+  /* resets */
+  ::view-transition-group(*),
+  ::view-transition-new(*),
+  ::view-transition-old(*) {
+    animation-name: none;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes zoom-in-to-125 {
+    to {
+      transform: scale(1.25);
+    }
+  }
+
+  @keyframes zoom-out-from-125 {
+    from {
+      transform: scale(1.25);
+    }
+  }
+
+  @keyframes slide-in-from-right-100 {
+    from {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes slide-out-to-right-100 {
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes slide-in-from-bottom-100 {
+    from {
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes slide-out-to-bottom-100 {
+    to {
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes darken-80 {
+    to {
+      filter: brightness(80%);
+    }
+  }
+
+  @keyframes slide-out-to-left-50 {
+    to {
+      transform: translate(-50%);
+    }
+  }
+
+  @keyframes slide-out-to-left-100 {
+    to {
+      transform: translate(-100%);
+    }
+  }
+
+  @keyframes blur-in {
+    from {
+      backdrop-filter: blur(0px);
+    }
+  }
+
+
+  /* forward navigation, when a new route is activated in the history stack */
+  ::view-transition-new(page-default-forward) {
+    /* the new page comes in from the right */
+    animation: 250ms ease both slide-in-from-right-100;
+  }
+  ::view-transition-old(page-default-forward) {
+    /* the old page leaves out to the left */
+    animation:
+        250ms ease both slide-out-to-left-50,
+        250ms ease both darken-80;
+  }
+
+  /* backward navigation, when a previous route is activated in the history stack */
+  ::view-transition-new(page-default-backward) {
+    /* the new page comes in from the left */
+    animation:
+        250ms ease both slide-out-to-left-100,
+        250ms ease both darken-80;
+    animation-direction: reverse;
+  }
+  ::view-transition-old(page-default-backward) {
+    /* the old page leaves out to the right while placed above the new page */
+    animation: 250ms ease reverse both slide-in-from-right-100;
+    z-index: 50;
+  }
+
+  /* overlay transitions */
+  ::view-transition-new(fullscreen-overlay-forward) {
+    animation:
+        300ms ease-out both zoom-out-from-125,
+        300ms ease-out both fade-in;
+  }
+  ::view-transition-new(fullscreen-overlay-backdrop-forward) {
+    animation:
+        300ms ease-out both fade-in,
+        300ms ease-out both blur-in;
+  }
+  ::view-transition-old(fullscreen-overlay-backward) {
+    animation:
+        300ms ease-out both zoom-out-from-125,
+        300ms ease-out both fade-in;
+    animation-direction: reverse;
+  }
+  ::view-transition-old(fullscreen-overlay-backdrop-backward) {
+    animation:
+        300ms ease-out both fade-in,
+        300ms ease-out bot blur-in;
+    animation-direction: reverse;
+  }
+
+  /* bottom sheet */
+  ::view-transition-new(drawer-forward) {
+    animation: 300ms ease-out both slide-in-from-bottom-100;
+  }
+  ::view-transition-new(drawer-backdrop-forward) {
+    animation: 300ms ease-out both fade-in;
+  }
+  ::view-transition-old(drawer-backward) {
+    animation: 300ms ease-out both slide-in-from-bottom-100;
+    animation-direction: reverse;
+  }
+  ::view-transition-old(drawer-backdrop-backward) {
+    animation: 300ms ease-out both fade-in;
+    animation-direction: reverse;
+  }
+}

@@ -10,9 +10,6 @@ export default function Layout() {
       </div>
       <div
         className="container m-auto"
-        style={{
-          viewTransitionName: 'main-content',
-        }}
       >
         <Outlet/>
       </div>

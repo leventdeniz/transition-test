@@ -1,8 +1,9 @@
-import { Form, Link, useLocation, useNavigate } from 'react-router';
+import { Form, useSearchParams } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
 import { Label } from '~/components/ui/label';
 import type { Route } from '../../.react-router/types/app/routes/+types/input';
+import Link from '~/components/ui/link';
 
 const MONTHLY_CARE_ALLOWANCE_OPTIONS = [
   60000,
@@ -25,8 +26,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 }
 
 export default function Input({ loaderData }: Route.ComponentProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const onChange = (event: React.FocusEvent<HTMLFormElement>) => {
     const params = new FormData(event.currentTarget);
@@ -36,9 +36,7 @@ export default function Input({ loaderData }: Route.ComponentProps) {
         urlSearch.append(key, `${value}`);
       }
     });
-    navigate({ pathname: '/input', search: urlSearch.toString() }, {
-      replace: true,
-    });
+    setSearchParams(urlSearch, { preventScrollReset: true});
   };
 
   return (
@@ -48,17 +46,28 @@ export default function Input({ loaderData }: Route.ComponentProps) {
       </h1>
       <p>This is input page</p>
       <Form id="search-form" role="search" onChange={onChange}>
-        <RadioGroup id="monthlyCareAllowance" name="monthlyCareAllowance" defaultValue={`${loaderData.monthlyCareAllowance}`}>
+        {Array.from({ length: 12 }, (_, index) => (
+          <div className="bg-gray-50 rounded-lg p-4 m-4 text-gray-500" key={index}>
+            Test {index + 1}
+          </div>
+        ))}
+
+        <RadioGroup
+          id="monthlyCareAllowance"
+          name="monthlyCareAllowance"
+          defaultValue={`${loaderData.monthlyCareAllowance}`}
+          className="gap-6 mx-4"
+        >
           {MONTHLY_CARE_ALLOWANCE_OPTIONS.map((option) => (
-            <div key={option} className="flex items-center space-x-2">
-              <RadioGroupItem value={`${option}`} id={`radio-${option}`} />
-              <Label htmlFor={`radio-${option}`}>{option / 100} €</Label>
+            <div key={option} className="flex items-center space-x-2 bg-gray-100 rounded-lg px-4">
+              <RadioGroupItem value={`${option}`} id={`radio-${option}`}/>
+              <Label className="py-6 w-full" htmlFor={`radio-${option}`}>{option / 100} €</Label>
             </div>
           ))}
         </RadioGroup>
       </Form>
-      <Button asChild>
-        <Link to={{pathname: "/result", search: location.search }} viewTransition>
+      <Button asChild className="p-2 m-4">
+        <Link to={{ pathname: "/result", search: searchParams.toString() }} transitionName="page-default-forward">
           weiter zu result
         </Link>
       </Button>

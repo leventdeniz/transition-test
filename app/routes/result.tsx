@@ -1,10 +1,12 @@
-import { data, Link, useLoaderData, useLocation, useNavigate } from 'react-router';
-import React, { Suspense, use } from 'react';
+import { data, useLoaderData, useLocation, useNavigate } from 'react-router';
+import React, { Suspense, use, useEffect } from 'react';
 import { Skeleton } from '~/components/ui/skeleton';
 import type { ResultEntry } from '~/types/result.type';
 import { Button } from '~/components/ui/button';
 import type { Route } from '../../.react-router/types/app/routes/+types/result';
 import cache from 'memory-cache';
+import { useResultsContext } from '~/components/results-context';
+import Link from '~/components/ui/link';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
@@ -12,7 +14,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const monthlyCareAllowance = queryParams.get('monthlyCareAllowance') ?? 150000;
   const cachedUrl: ResultEntry[] = cache.get(request.url);
-  if (cachedUrl) {
+/*  if (cachedUrl) {
     const test: Promise<ResultEntry[]> =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
     await Promise.race([
      new Promise((resolve) => setTimeout(resolve, 30)),
@@ -22,7 +24,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     return data({
       result: test,
     });
-  }
+  }*/
 
   const slowResultRequest: Promise<ResultEntry[]> = fetch(
     `https://pflegeversicherung.check24-test.de/api/v1/public/customer-frontend/calculation/tariffversions?birthdate=02.12.1997&monthlyCareAllowance=${monthlyCareAllowance}`,
@@ -85,7 +87,7 @@ export default function Result({}: Route.ComponentProps) {
     <div>
       <h1 className="text-lg font-bold">Result</h1>
       <Button asChild>
-        <Link to={{pathname: "/input", search: location.search }}>
+        <Link to='-1' transitionName="page-default-backward">
           <span>input change</span>
         </Link>
       </Button>
@@ -93,8 +95,9 @@ export default function Result({}: Route.ComponentProps) {
         <ResultList resultsPromise={loaderData.result}/>
       </Suspense>
       <i>Bei diesem Beispiel flackern im iOs Device die ViewTransitions</i>
+      <br />
       <Button asChild>
-        <Link to={{pathname: "/input", search: location.search }}>
+        <Link to='-1' transitionName="page-default-backward">
           <span>input change</span>
         </Link>
       </Button>
@@ -103,7 +106,15 @@ export default function Result({}: Route.ComponentProps) {
 }
 
 const ResultList = ({ resultsPromise }: { resultsPromise: Promise<ResultEntry[]> }) => {
-  const results = use(resultsPromise)
+  const { setter, value } = useResultsContext();
+  const results = use(resultsPromise) || value || [];
+
+  useEffect(() => {
+    if (!results || results.length === 0) {
+      return;
+    }
+    setter(results);
+  }, [results, setter]);
   return (
     <div className="flex flex-col gap-4 m-4">
       {results.length > 0 && results.map((data: any) => (
