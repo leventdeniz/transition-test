@@ -18,3 +18,12 @@ export const waitForFetch = async <T>(input: RequestInfo | URL, init?: RequestIn
     }, ms);
   });
 }
+
+export const waitFor = async <T>(input: T, minMs: number = 1, maxMs: number = 2) => {
+  const ms = Math.floor(Math.random() * (maxMs - minMs + 1) + minMs);
+  return new Promise<T>((resolve) => {
+    setTimeout(() => {
+      resolve(input);
+    }, ms);
+  });
+}

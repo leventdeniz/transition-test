@@ -7,12 +7,13 @@ import type { Route } from '../../.react-router/types/app/routes/+types/result';
 import cache from 'memory-cache';
 import { useResultsContext } from '~/components/results-context';
 import Link from '~/components/ui/link';
+import getDummyData from '~/lib/dummy-data';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const queryParams = url.searchParams;
 
-  const monthlyCareAllowance = queryParams.get('monthlyCareAllowance') ?? 150000;
+  const monthlyCareAllowance = Number(queryParams.get('monthlyCareAllowance')) ?? 150000;
   const cachedUrl: ResultEntry[] = cache.get(request.url);
 /*  if (cachedUrl) {
     const test: Promise<ResultEntry[]> =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
@@ -26,15 +27,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     });
   }*/
 
-  const slowResultRequest: Promise<ResultEntry[]> = fetch(
-    `https://pflegeversicherung.check24-test.de/api/v1/public/customer-frontend/calculation/tariffversions?birthdate=02.12.1997&monthlyCareAllowance=${monthlyCareAllowance}`,
-    {
-      method: 'GET',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-    },
-  ).then((res) => res.json());
+  const slowResultRequest = getDummyData((monthlyCareAllowance / 10000));
 /*
   await Promise.race([
    new Promise((resolve) => setTimeout(resolve, 30)),
