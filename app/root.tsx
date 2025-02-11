@@ -4,14 +4,14 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration, useNavigate, useViewTransitionState,
+  ScrollRestoration,
+  useNavigate,
 } from 'react-router';
-
 import type { Route } from './+types/root';
 import stylesheet from './app.css?url';
 import React, { useEffect } from 'react';
 import ResultsContextProvider from '~/components/results-context';
-import TransitionContextProvider, { useTransitionsContext } from '~/components/transition-context';
+import TransitionContextProvider, { TransitionStyles, useTransitionsContext } from '~/components/transition-context';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -29,29 +29,25 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const isIosDeviceUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const scrollRef = React.useRef(true);
 
   useEffect(() => {
+    // window.history.scrollRestoration = 'auto'
     window.addEventListener('popstate', (event) => {
       console.log({ event });
       if (event.hasUAVisualTransition) {
+        scrollRef.current = false;
         console.log('hasUAVisualTransition');
       } else {
+        scrollRef.current = true;
         console.log('no hasUAVisualTransition');
       }
     });
   }, []);
 
   return (
-    <TransitionContextProvider>
-      {children}
-    </TransitionContextProvider>
-  );
-}
-
-export default function App() {
-  const { transition } = useTransitionsContext();
-  return (
-    <html lang="en" style={transition ? { viewTransitionName: transition } : undefined}>
+    <html lang="en">
     <head>
       <meta charSet="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -59,13 +55,24 @@ export default function App() {
       <Links/>
     </head>
     <body>
-      <ResultsContextProvider>
-        <Outlet/>
-      </ResultsContextProvider>
-      <ScrollRestoration/>
-      <Scripts/>
+    <TransitionContextProvider>
+      {children}
+    </TransitionContextProvider>
+    {!isIosDeviceUserAgent ? <ScrollRestoration/> : null}
+    <Scripts/>
+    {/* scripts ggfs. verschieben */}
     </body>
     </html>
+  );
+}
+
+export default function App() {
+  return (
+    <ResultsContextProvider>
+      <TransitionStyles/>
+
+      <Outlet/>
+    </ResultsContextProvider>
   );
 }
 

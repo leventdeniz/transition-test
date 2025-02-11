@@ -1,21 +1,21 @@
-import { data, useLoaderData, useLocation, useNavigate } from 'react-router';
+import { Await, useLoaderData, useLocation, useNavigate } from 'react-router';
 import React, { Suspense, use, useEffect } from 'react';
 import { Skeleton } from '~/components/ui/skeleton';
 import type { ResultEntry } from '~/types/result.type';
 import { Button } from '~/components/ui/button';
 import type { Route } from '../../.react-router/types/app/routes/+types/result';
-import cache from 'memory-cache';
 import { useResultsContext } from '~/components/results-context';
 import Link from '~/components/ui/link';
 import getDummyData from '~/lib/dummy-data';
 
-export async function loader({ request }: Route.LoaderArgs) {
+/*export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const url = new URL(request.url);
   const queryParams = url.searchParams;
+  console.log("test", url, queryParams);
 
   const monthlyCareAllowance = Number(queryParams.get('monthlyCareAllowance')) ?? 150000;
-  const cachedUrl: ResultEntry[] = cache.get(request.url);
-/*  if (cachedUrl) {
+  // const cachedUrl: ResultEntry[] = cache.get(request.url);
+/!*  if (cachedUrl) {
     const test: Promise<ResultEntry[]> =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
     await Promise.race([
      new Promise((resolve) => setTimeout(resolve, 30)),
@@ -25,29 +25,27 @@ export async function loader({ request }: Route.LoaderArgs) {
     return data({
       result: test,
     });
-  }*/
+  }*!/
 
   const slowResultRequest = getDummyData((monthlyCareAllowance / 10000));
-/*
+/!*
   await Promise.race([
    new Promise((resolve) => setTimeout(resolve, 30)),
    slowResultRequest,
- ]);*/
+ ]);*!/
 
-  cache.put(request.url, slowResultRequest, 1000 * 60 * 60);
-  return data(
-    { result: slowResultRequest },
-    /*{
+  // cache.put(request.url, slowResultRequest, 1000 * 60 * 60);
+  return { result: slowResultRequest };
+    /!*{
       headers: {
         'Cache-Control': 'max-age=3600, public',
       },
-    }*/
-  );
-}
+    }*!/
+}*/
 
-export function headers({ loaderHeaders }: Route.HeadersArgs) {
+/*export function headers({ loaderHeaders }: Route.HeadersArgs) {
   return loaderHeaders;
-}
+}*/
 /*export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
   const serverLoaderData = await serverLoader();
 
@@ -73,9 +71,20 @@ export function HydrateFallback({}: Route.HydrateFallbackProps) {
     )
 }*/
 
+const data = Array.from({ length: 30 }).map((_, i) => ({
+  id: i + 1,
+  provider: { name: `Dummy Provider` },
+  tariff: { name: `Dummy Tariff ${i}` },
+}));
+
 export default function Result({}: Route.ComponentProps) {
-  const loaderData = useLoaderData();
-  const location = useLocation();
+  // const loaderData = useLoaderData<typeof clientLoader>();
+  const url = new URL(window.location.href);
+  const queryParams = url.searchParams;
+
+  const monthlyCareAllowance = Number(queryParams.get('monthlyCareAllowance')) ?? 150000;
+  // const slowResultRequest = getDummyData((monthlyCareAllowance / 10000));
+
   return (
     <div>
       <h1 className="text-lg font-bold">Result</h1>
@@ -84,9 +93,12 @@ export default function Result({}: Route.ComponentProps) {
           <span>input change</span>
         </Link>
       </Button>
-      <Suspense fallback={<ResultsSkeletons length={12}/>}>
-        <ResultList resultsPromise={loaderData.result}/>
-      </Suspense>
+      <ResultList results={data} />
+  {/*    <Suspense fallback={<ResultsSkeletons length={30} />}>
+        <Await resolve={slowResultRequest} errorElement={<div>Error</div>}>
+          {(results) => <ResultList results={results}/>}
+        </Await>
+      </Suspense>*/}
       <i>Bei diesem Beispiel flackern im iOs Device die ViewTransitions</i>
       <br />
       <Button asChild>
@@ -98,16 +110,17 @@ export default function Result({}: Route.ComponentProps) {
   );
 }
 
-const ResultList = ({ resultsPromise }: { resultsPromise: Promise<ResultEntry[]> }) => {
-  const { setter, value } = useResultsContext();
-  const results = use(resultsPromise) || value || [];
-
+const ResultList = ({ results }: { results: ResultEntry[] }) => {
+  // const { setter, value } = useResultsContext();
+  // const results = use(resultsPromise) || [];
+/*
   useEffect(() => {
     if (!results || results.length === 0) {
       return;
     }
     setter(results);
-  }, [results, setter]);
+  }, [results, setter]);*/
+
   return (
     <div className="flex flex-col gap-4 m-4">
       {results.length > 0 && results.map((data: any) => (

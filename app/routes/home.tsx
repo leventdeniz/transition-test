@@ -7,9 +7,9 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
-export function loader() {
+/*export function loader() {
   return redirect("/input");
-}
+}*/
 
 export default function Home() {
   return <div>Home</div>;

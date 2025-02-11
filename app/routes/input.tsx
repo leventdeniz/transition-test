@@ -17,7 +17,7 @@ const MONTHLY_CARE_ALLOWANCE_OPTIONS = [
   300000,
 ];
 
-export async function loader({ params, request }: Route.LoaderArgs) {
+export async function clientLoader({ params, request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const queryParams = url.searchParams;
   return {
@@ -36,7 +36,7 @@ export default function Input({ loaderData }: Route.ComponentProps) {
         urlSearch.append(key, `${value}`);
       }
     });
-    setSearchParams(urlSearch, { preventScrollReset: true});
+    setSearchParams(urlSearch, { preventScrollReset: true, replace: true });
   };
 
   return (

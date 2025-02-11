@@ -16,9 +16,10 @@ body {
     --radius: 0.5rem;
   }
 }
+/*
 
 @layer view-transitions {
-  /* resets */
+  !* resets *!
   ::view-transition-group(*),
   ::view-transition-new(*),
   ::view-transition-old(*) {
@@ -98,33 +99,33 @@ body {
   }
 
 
-  /* forward navigation, when a new route is activated in the history stack */
+  !* forward navigation, when a new route is activated in the history stack *!
   ::view-transition-new(page-default-forward) {
-    /* the new page comes in from the right */
-    animation: 250ms ease both slide-in-from-right-100;
+    !* the new page comes in from the right *!
+    animation: 250ms ease-in-out both slide-in-from-right-100;
   }
   ::view-transition-old(page-default-forward) {
-    /* the old page leaves out to the left */
+    !* the old page leaves out to the left *!
     animation:
-        250ms ease both slide-out-to-left-50,
-        250ms ease both darken-80;
+        250ms ease-in-out both slide-out-to-left-50,
+        250ms ease-in-out both darken-80;
   }
 
-  /* backward navigation, when a previous route is activated in the history stack */
+  !* backward navigation, when a previous route is activated in the history stack *!
   ::view-transition-new(page-default-backward) {
-    /* the new page comes in from the left */
+    !* the new page comes in from the left *!
     animation:
-        250ms ease both slide-out-to-left-100,
-        250ms ease both darken-80;
+        250ms ease-in-out both slide-out-to-left-100,
+        250ms ease-in-out both darken-80;
     animation-direction: reverse;
   }
   ::view-transition-old(page-default-backward) {
-    /* the old page leaves out to the right while placed above the new page */
-    animation: 250ms ease reverse both slide-in-from-right-100;
+    !* the old page leaves out to the right while placed above the new page *!
+    animation: 250ms ease-in-out reverse both slide-in-from-right-100;
     z-index: 50;
   }
 
-  /* overlay transitions */
+  !* overlay transitions *!
   ::view-transition-new(fullscreen-overlay-forward) {
     animation:
         300ms ease-out both zoom-out-from-125,
@@ -148,7 +149,7 @@ body {
     animation-direction: reverse;
   }
 
-  /* bottom sheet */
+  !* bottom sheet *!
   ::view-transition-new(drawer-forward) {
     animation: 300ms ease-out both slide-in-from-bottom-100;
   }
@@ -162,5 +163,48 @@ body {
   ::view-transition-old(drawer-backdrop-backward) {
     animation: 300ms ease-out both fade-in;
     animation-direction: reverse;
+  }
+}
+*/
+
+@keyframes push-move-out-left {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes push-move-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0%);
+  }
+}
+
+/* pop transition */
+
+@keyframes pop-move-out-right {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pop-move-in-from-left {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0%);
   }
 }
