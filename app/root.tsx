@@ -27,24 +27,18 @@ export const links: Route.LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
-  const navigate = useNavigate();
+const ScrollRestorationWrapper = () => {
   const isIosDeviceUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const scrollRef = React.useRef(true);
+  const { scroll } = useTransitionsContext();
 
-  useEffect(() => {
-    // window.history.scrollRestoration = 'auto'
-    window.addEventListener('popstate', (event) => {
-      console.log({ event });
-      if (event.hasUAVisualTransition) {
-        scrollRef.current = false;
-        console.log('hasUAVisualTransition');
-      } else {
-        scrollRef.current = true;
-        console.log('no hasUAVisualTransition');
-      }
-    });
-  }, []);
+  if (isIosDeviceUserAgent && scroll) {
+    return null;
+  }
+
+  return <ScrollRestoration />;
+}
+
+export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <html lang="en">
@@ -57,8 +51,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <body>
     <TransitionContextProvider>
       {children}
+      <ScrollRestorationWrapper />
     </TransitionContextProvider>
-    {!isIosDeviceUserAgent ? <ScrollRestoration/> : null}
     <Scripts/>
     {/* scripts ggfs. verschieben */}
     </body>
@@ -70,7 +64,7 @@ export default function App() {
   return (
     <ResultsContextProvider>
       <TransitionStyles/>
-
+      <div className="ruler" />
       <Outlet/>
     </ResultsContextProvider>
   );

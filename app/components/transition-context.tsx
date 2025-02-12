@@ -3,16 +3,41 @@ import React, { createContext, useEffect, useState } from 'react';
 const TransitionContext = createContext<{
   transition: string;
   setTransition:  React.Dispatch<React.SetStateAction<string>>;
+  scroll: boolean;
+  setScroll: (value: boolean) => void;
 }>({
   transition: '',
   setTransition: () => {},
+  setScroll: () => {},
+  scroll: true,
 });
 
 export function TransitionContextProvider({ children }: { children: React.ReactNode}) {
   const [transition, setTransition] = useState('');
+  const scrollRef = React.useRef(true);
+  const scroll = scrollRef.current;
 
+  const setScroll = (value: boolean) => {
+    scrollRef.current = value;
+  };
+
+  useEffect(() => {
+    // window.history.scrollRestoration = 'auto'
+   /* window.addEventListener('popstate', (event) => {
+      console.log({ event });
+      if (event.hasUAVisualTransition) {
+        scrollRef.current = false;
+        console.log('hasUAVisualTransition');
+      } else {
+        scrollRef.current = true;
+        console.log('no hasUAVisualTransition');
+      }
+    });*/
+  }, []);
+
+  console.log({ scroll });
   return (
-    <TransitionContext.Provider value={{ transition, setTransition }}>
+    <TransitionContext.Provider value={{ transition, setTransition, scroll, setScroll }}>
       {children}
     </TransitionContext.Provider>
   );

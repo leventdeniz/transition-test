@@ -1,17 +1,19 @@
 import React, { createContext, useCallback, useMemo, useState } from 'react';
 
-export const ResultsContext = createContext<{ value: unknown[], setter: (value: unknown[]) => void }>
+export const ResultsContext = createContext<{ value: Record<string, unknown[]>, setter: (key: string, value: unknown[]) => void }>
 ({
-   value: [],
+   value: { },
    setter: () => {},
  });
 export const useResultsContext = () => React.useContext(ResultsContext);
 
 const ResultsContextProvider = ({ children }: { children: React.ReactNode} ) => {
-  const [globalStateValue, setGlobalStateValue] = useState<unknown[]>([]);
+  const [globalStateValue, setGlobalStateValue] = useState<Record<string, unknown[]>>({});
 
-  const setter = useCallback((value: unknown[]) => {
-    setGlobalStateValue(value);
+  const setter = useCallback((key: string, value: unknown[]) => {
+    const newValue = {...globalStateValue};
+    newValue[key] = value;
+    setGlobalStateValue(newValue);
   }, [setGlobalStateValue]);
 
   const value = useMemo(() => ({

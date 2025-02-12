@@ -4,7 +4,8 @@ import { useTransitionsContext } from '~/components/transition-context';
 
 export default function Link({ children, to, onClick, viewTransition = true, transitionName, ...props }: LinkProps & {transitionName?: string}) {
   const navigate = useNavigate();
-  const { setTransition } = useTransitionsContext();
+  const { setTransition, setScroll } = useTransitionsContext();
+  const isIosDeviceUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   if (to === '-1') {
     // @ts-ignore
@@ -26,7 +27,10 @@ export default function Link({ children, to, onClick, viewTransition = true, tra
     if (transitionName) {
       setTransition(transitionName);
     }
-
+    if (isIosDeviceUserAgent) {
+      // window.scrollTo(0, 0);
+      setScroll(false);
+    }
     const transition = document.startViewTransition(() => {
       navigate(to);
       // return new Promise((resolve) => setTimeout(() => resolve(), 1000));

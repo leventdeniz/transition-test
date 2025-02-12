@@ -208,3 +208,12 @@ body {
     transform: translateX(0%);
   }
 }
+.ruler {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 100vh;
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px solid red;
+}
