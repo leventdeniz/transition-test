@@ -47,7 +47,7 @@ export default function Input({ loaderData }: Route.ComponentProps) {
       <p>This is input page</p>
       <Form id="search-form" role="search" onChange={onChange}>
         {Array.from({ length: 12 }, (_, index) => (
-          <div className="bg-gray-50 rounded-lg p-4 m-4 text-gray-500" key={index}>
+          <div className="bg-gray-50 rounded-lg p-4 m-4 text-gray-500 dark:bg-gray-600 dark:text-gray-100" key={index}>
             Test {index + 1}
           </div>
         ))}
@@ -59,7 +59,7 @@ export default function Input({ loaderData }: Route.ComponentProps) {
           className="gap-6 mx-4"
         >
           {MONTHLY_CARE_ALLOWANCE_OPTIONS.map((option) => (
-            <div key={option} className="flex items-center space-x-2 bg-gray-100 rounded-lg px-4">
+            <div key={option} className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 rounded-lg px-4">
               <RadioGroupItem value={`${option}`} id={`radio-${option}`}/>
               <Label className="py-6 w-full" htmlFor={`radio-${option}`}>{option / 100} €</Label>
             </div>
