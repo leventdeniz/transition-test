@@ -10,7 +10,7 @@ export default function Layout() {
         <span>C24 Wireframe</span>
         <div>
           <span className="text-xs block">useScrollRestoration: {useScrollRestoration ? 'true' : 'false'}</span>
-          <span className="text-xs block">transition: {transition}</span>
+          <span className="text-xs block">transition: {transition?.replace("page-default", '')}</span>
         </div>
       </div>
       <div

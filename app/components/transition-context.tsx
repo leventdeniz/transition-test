@@ -23,7 +23,11 @@ export function TransitionContextProvider({ children }: { children: React.ReactN
 
   useEffect(() => {
     const viewTransitionSupported = Boolean(document.startViewTransition);
-    const isIOsVersion18UserAgent = navigator.userAgent.match(/OS (\d+)/)?.[1] ?? null;
+    const userAgentIOsVersion = navigator.userAgent.match(/OS (\d+)/)?.[1] ?? null;
+    const isIOsDeviceUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOsDeviceUserAgent && userAgentIOsVersion && Number(userAgentIOsVersion) >= 18) {
+      setUseScrollRestorationScroll(false);
+    }
   }, []);
 
   useEffect(() => {

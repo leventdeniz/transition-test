@@ -33,9 +33,9 @@ const ScrollRestorationWrapper = () => {
   //  ändern auf transition supported
   const { useScrollRestoration } = useTransitionsContext();
 
-/*  if (!useScrollRestoration) {
+  if (!useScrollRestoration) {
     return null;
-  }*/
+  }
 
   return <ScrollRestoration />;
 }
