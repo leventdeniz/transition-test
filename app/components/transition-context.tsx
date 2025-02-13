@@ -13,8 +13,9 @@ const TransitionContext = createContext<{
 });
 
 export function TransitionContextProvider({ children }: { children: React.ReactNode}) {
+  const isIOsDeviceUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const [transition, setTransition] = useState('');
-  const scrollRef = React.useRef(true);
+  const scrollRef = React.useRef(!isIOsDeviceUserAgent);
   const useScrollRestoration = scrollRef.current;
 
   const setUseScrollRestorationScroll = (value: boolean) => {
@@ -24,8 +25,7 @@ export function TransitionContextProvider({ children }: { children: React.ReactN
   useEffect(() => {
     const viewTransitionSupported = Boolean(document.startViewTransition);
     const userAgentIOsVersion = navigator.userAgent.match(/OS (\d+)/)?.[1] ?? null;
-    const isIOsDeviceUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOsDeviceUserAgent && userAgentIOsVersion && Number(userAgentIOsVersion) >= 18) {
+    if (isIOsDeviceUserAgent /*&& userAgentIOsVersion && Number(userAgentIOsVersion) >= 18*/) {
       setUseScrollRestorationScroll(false);
     }
   }, []);

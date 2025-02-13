@@ -21,7 +21,10 @@ export default function Link({ children, to, onClick, viewTransition = true, tra
     const viewTransitionSupported = Boolean(document.startViewTransition);
 
     if (!viewTransition || !viewTransitionSupported || !transitionName) {
-      setUseScrollRestorationScroll(true);
+      // setUseScrollRestorationScroll(true);
+      if (isIosDeviceUserAgent) {
+        window.scrollTo(0, 0);
+      }
       navigate(to);
       return;
     }
@@ -30,16 +33,18 @@ export default function Link({ children, to, onClick, viewTransition = true, tra
     if (transitionName) {
       setTransition(transitionName);
     }
-    if (isIosDeviceUserAgent) {
-      // window.scrollTo(0, 0);
-    }
 
     const transition = document.startViewTransition(() => {
-      setUseScrollRestorationScroll(true);
+      // setUseScrollRestorationScroll(true);
       return navigate(to);
       // return new Promise((resolve) => setTimeout(() => resolve(), 1000));
     });
     setActiveTransition(transition);
+    transition.ready.then(() => {
+      if (isIosDeviceUserAgent) {
+        window.scrollTo(0, 0);
+      }
+    });
     transition.finished.then(() => {
       setActiveTransition(null);
     });
