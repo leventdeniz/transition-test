@@ -3,25 +3,26 @@ import React, { createContext, useEffect, useState } from 'react';
 const TransitionContext = createContext<{
   transition: string;
   setTransition:  React.Dispatch<React.SetStateAction<string>>;
-  scroll: boolean;
-  setScroll: (value: boolean) => void;
+  useScrollRestoration: boolean;
+  setUseScrollRestorationScroll: (value: boolean) => void;
 }>({
   transition: '',
   setTransition: () => {},
-  setScroll: () => {},
-  scroll: true,
+                                            setUseScrollRestorationScroll: () => {},
+  useScrollRestoration: true,
 });
 
 export function TransitionContextProvider({ children }: { children: React.ReactNode}) {
   const [transition, setTransition] = useState('');
   const scrollRef = React.useRef(true);
-  const scroll = scrollRef.current;
+  const useScrollRestoration = scrollRef.current;
 
-  const setScroll = (value: boolean) => {
+  const setUseScrollRestorationScroll = (value: boolean) => {
     scrollRef.current = value;
   };
 
   useEffect(() => {
+    // todo: das vielleicht wieder einkommentieren?
     // window.history.scrollRestoration = 'auto'
    /* window.addEventListener('popstate', (event) => {
       console.log({ event });
@@ -35,9 +36,9 @@ export function TransitionContextProvider({ children }: { children: React.ReactN
     });*/
   }, []);
 
-  console.log({ scroll });
+  console.log({ useScrollRestoration });
   return (
-    <TransitionContext.Provider value={{ transition, setTransition, scroll, setScroll }}>
+    <TransitionContext.Provider value={{ transition, setTransition, useScrollRestoration, setUseScrollRestorationScroll }}>
       {children}
     </TransitionContext.Provider>
   );
