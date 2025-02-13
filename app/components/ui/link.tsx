@@ -34,7 +34,7 @@ export default function Link({ children, to, onClick, viewTransition = true, tra
     }
 
     const transition = document.startViewTransition(() => {
-      setUseScrollRestorationScroll(false);
+      setUseScrollRestorationScroll(true);
       return navigate(to);
       // return new Promise((resolve) => setTimeout(() => resolve(), 1000));
     });
