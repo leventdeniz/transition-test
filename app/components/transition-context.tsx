@@ -8,7 +8,7 @@ const TransitionContext = createContext<{
 }>({
   transition: '',
   setTransition: () => {},
-                                            setUseScrollRestorationScroll: () => {},
+  setUseScrollRestorationScroll: () => {},
   useScrollRestoration: true,
 });
 
@@ -20,6 +20,11 @@ export function TransitionContextProvider({ children }: { children: React.ReactN
   const setUseScrollRestorationScroll = (value: boolean) => {
     scrollRef.current = value;
   };
+
+  useEffect(() => {
+    const viewTransitionSupported = Boolean(document.startViewTransition);
+    const isIOsVersion18UserAgent = navigator.userAgent.match(/OS (\d+)/)?.[1] ?? null;
+  }, []);
 
   useEffect(() => {
     // todo: das vielleicht wieder einkommentieren?

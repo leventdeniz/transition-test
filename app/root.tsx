@@ -29,18 +29,13 @@ export const links: Route.LinksFunction = () => [
 
 const ScrollRestorationWrapper = () => {
   const isIosDeviceUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const [viewTransitionSupported, setViewTransitionSupported] = React.useState(true);
-
-  useEffect(() => {
-    setViewTransitionSupported(Boolean(document?.startViewTransition));
-  }, []);
 
   //  ändern auf transition supported
   const { useScrollRestoration } = useTransitionsContext();
 
-  if (!viewTransitionSupported || !useScrollRestoration) {
+/*  if (!useScrollRestoration) {
     return null;
-  }
+  }*/
 
   return <ScrollRestoration />;
 }
