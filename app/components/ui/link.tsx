@@ -1,8 +1,9 @@
 import { Link as RouterLink, type LinkProps, useNavigate } from 'react-router';
-import type { MouseEvent } from 'react';
+import React, { type MouseEvent } from 'react';
 import { useTransitionsContext } from '~/components/transition-context';
 
 export default function Link({ children, to, onClick, viewTransition = true, transitionName, ...props }: LinkProps & { transitionName?: string }) {
+  const [activeTransition, setActiveTransition] = React.useState<ViewTransition | null>(null);
   const navigate = useNavigate();
   const { setTransition, setUseScrollRestorationScroll } = useTransitionsContext();
   const isIosDeviceUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -38,7 +39,15 @@ export default function Link({ children, to, onClick, viewTransition = true, tra
       return navigate(to);
       // return new Promise((resolve) => setTimeout(() => resolve(), 1000));
     });
+    setActiveTransition(transition);
+    transition.finished.then(() => {
+      setActiveTransition(null);
+    });
   };
 
-  return <RouterLink {...props} onClick={handleNavigation} to={to}>{children}</RouterLink>;
+  return (
+    <RouterLink {...props} onClick={handleNavigation} to={to}>
+      {activeTransition === null ? children : 'Loading...'}
+    </RouterLink>
+  );
 }

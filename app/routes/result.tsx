@@ -10,7 +10,7 @@ import getDummyData from '~/lib/dummy-data';
 import cache from 'memory-cache';
 import { clsx } from 'clsx';
 
-export async function loader({ request }: Route.ClientLoaderArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const queryParams = url.searchParams;
   // console.log("test", url, queryParams);
@@ -18,10 +18,10 @@ export async function loader({ request }: Route.ClientLoaderArgs) {
   const monthlyCareAllowance = Number(queryParams.get('monthlyCareAllowance')) ?? 150000;
   const cachedUrl: ResultEntry[] = cache.get(request.url);
   if (cachedUrl) {
-    const test: Promise<ResultEntry[]> =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
-
+    // const test: Promise<ResultEntry[]> = new Promise((resolve) => resolve(cachedUrl));
+    const test = cachedUrl;
     await Promise.race([
-     new Promise((resolve) => setTimeout(resolve, 50)),
+     new Promise((resolve) => setTimeout(resolve, 30)),
      test,
    ]);
 
@@ -33,24 +33,24 @@ export async function loader({ request }: Route.ClientLoaderArgs) {
   const slowResultRequest = await getDummyData((monthlyCareAllowance / 10000));
 
   await Promise.race([
-   new Promise((resolve) => setTimeout(resolve, 50)),
+   new Promise((resolve) => setTimeout(resolve, 30)),
    slowResultRequest,
  ]);
 
   cache.put(request.url, slowResultRequest, 1000 * 60 * 60);
   return data(
     { result: slowResultRequest },
-    {
+   /* {
       headers: {
         'Cache-Control': 'max-age=3600, public',
       },
-    },
+    },*/
   );
 }
 
-export function headers({ loaderHeaders }: Route.HeadersArgs) {
+/*export function headers({ loaderHeaders }: Route.HeadersArgs) {
   return loaderHeaders;
-}
+}*/
 /*export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
   const serverLoaderData = await serverLoader();
 
@@ -82,8 +82,7 @@ const data = Array.from({ length: 30 }).map((_, i) => ({
   tariff: { name: `Dummy Tariff ${i}` },
 }));*/
 
-export default function Result({}: Route.ComponentProps) {
-  const loaderData = useLoaderData<typeof loader>();
+export default function Result({ loaderData }: Route.ComponentProps) {
   // const url = new URL(window.location.href);
   // const queryParams = url.searchParams;
   //
@@ -98,7 +97,7 @@ export default function Result({}: Route.ComponentProps) {
           <span>input change</span>
         </Link>
       </Button>
-      <ResultList results={loaderData.result} />
+      {/*<ResultList results={loaderData.result} />*/}
      {/* <Suspense>
         <Await resolve={new Promise((resolve) => setTimeout(resolve, 50))}>
           {() => (
@@ -108,11 +107,11 @@ export default function Result({}: Route.ComponentProps) {
           )}
       </Await>
       </Suspense>*/}
-      {/*<Suspense fallback={<ResultList results={[]} />}>
+      <Suspense fallback={<ResultList results={[]} />}>
         <Await resolve={loaderData.result}>
           {(results) => <ResultList results={results} />}
         </Await>
-      </Suspense>*/}
+      </Suspense>
       <i>Bei diesem Beispiel flackern im iOs Device die ViewTransitions</i>
       <br />
       <Button asChild>
