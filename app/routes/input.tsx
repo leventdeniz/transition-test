@@ -67,7 +67,7 @@ export default function Input({ loaderData }: Route.ComponentProps) {
         </RadioGroup>
       </Form>
       <Button asChild className="p-2 m-4">
-        <Link to={{ pathname: "/result", search: searchParams.toString() }} transitionName="page-default-forward">
+        <Link to={{ pathname: "/result", search: searchParams.toString() }} transitionName="page-default-forward" prefetch="viewport">
           weiter zu result
         </Link>
       </Button>

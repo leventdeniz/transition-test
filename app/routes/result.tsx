@@ -16,7 +16,7 @@ export async function loader({ request }: Route.ClientLoaderArgs) {
   // console.log("test", url, queryParams);
 
   const monthlyCareAllowance = Number(queryParams.get('monthlyCareAllowance')) ?? 150000;
-/*  const cachedUrl: ResultEntry[] = cache.get(request.url);
+  const cachedUrl: ResultEntry[] = cache.get(request.url);
   if (cachedUrl) {
     const test: Promise<ResultEntry[]> =  new Promise((resolve) => setTimeout(() => resolve(cachedUrl), 1));
 
@@ -28,16 +28,16 @@ export async function loader({ request }: Route.ClientLoaderArgs) {
     return data({
       result: test,
     });
-  }*/
+  }
 
-  const slowResultRequest = getDummyData((monthlyCareAllowance / 10000));
+  const slowResultRequest = await getDummyData((monthlyCareAllowance / 10000));
 
   await Promise.race([
    new Promise((resolve) => setTimeout(resolve, 50)),
    slowResultRequest,
  ]);
 
-  // cache.put(request.url, slowResultRequest, 1000 * 60 * 60);
+  cache.put(request.url, slowResultRequest, 1000 * 60 * 60);
   return data(
     { result: slowResultRequest },
     {
@@ -51,7 +51,7 @@ export async function loader({ request }: Route.ClientLoaderArgs) {
 export function headers({ loaderHeaders }: Route.HeadersArgs) {
   return loaderHeaders;
 }
-export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
+/*export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
   const serverLoaderData = await serverLoader();
 
   return {
@@ -59,7 +59,7 @@ export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
   }
 }
 
-clientLoader.hydrate = true as const;
+clientLoader.hydrate = true as const;*/
 /*
 export function HydrateFallback({}: Route.HydrateFallbackProps) {
   const navigate = useNavigate();
@@ -98,7 +98,7 @@ export default function Result({}: Route.ComponentProps) {
           <span>input change</span>
         </Link>
       </Button>
-      {/*<ResultList results={data} />*/}
+      <ResultList results={loaderData.result} />
      {/* <Suspense>
         <Await resolve={new Promise((resolve) => setTimeout(resolve, 50))}>
           {() => (
@@ -108,11 +108,11 @@ export default function Result({}: Route.ComponentProps) {
           )}
       </Await>
       </Suspense>*/}
-      <Suspense fallback={<ResultList results={[]} />}>
+      {/*<Suspense fallback={<ResultList results={[]} />}>
         <Await resolve={loaderData.result}>
           {(results) => <ResultList results={results} />}
         </Await>
-      </Suspense>
+      </Suspense>*/}
       <i>Bei diesem Beispiel flackern im iOs Device die ViewTransitions</i>
       <br />
       <Button asChild>
