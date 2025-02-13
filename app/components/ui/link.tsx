@@ -22,10 +22,11 @@ export default function Link({ children, to, onClick, viewTransition = true, tra
 
     if (!viewTransition || !viewTransitionSupported || !transitionName) {
       // setUseScrollRestorationScroll(true);
-      if (isIosDeviceUserAgent) {
-        window.scrollTo(0, 0);
-      }
-      navigate(to);
+      new Promise((resolve) => resolve(navigate(to))).finally(() => {
+        if (isIosDeviceUserAgent) {
+          window.scrollTo(0, 0);
+        }
+      });
       return;
     }
 
